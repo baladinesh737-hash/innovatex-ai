@@ -1,0 +1,10 @@
+Flask
+flask_sqlalchemy
+flask_cors
+gunicorn
+pandas
+openpyxl
+PyPDF2
+requests
+psycopg2-binary
+groq

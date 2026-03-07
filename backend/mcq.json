@@ -1,0 +1,12 @@
+[
+  {
+    "question": "Python is?",
+    "options": ["Language", "Car", "Fruit", "Game"],
+    "answer": "Language"
+  },
+  {
+    "question": "Flask is?",
+    "options": ["Framework", "Database", "IDE", "OS"],
+    "answer": "Framework"
+  }
+]

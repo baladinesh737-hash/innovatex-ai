@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>InnovateX Login</title>
+
+<style>
+
+body{
+background:#0b0b0b;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
+}
+
+.container{
+background:#111;
+padding:40px;
+border-radius:12px;
+width:350px;
+text-align:center;
+box-shadow:0 0 25px #00ffc3;
+}
+
+h1{
+color:#00ffc3;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:6px;
+background:#1f1f1f;
+color:white;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#00ffc3;
+border:none;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#00d6a6;
+}
+
+.link{
+margin-top:10px;
+cursor:pointer;
+color:#00ffc3;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>InnovateX 🚀</h1>
+
+<h3 id="title">Login</h3>
+
+<input id="name" placeholder="Full Name" style="display:none">
+
+<input id="username" placeholder="Username">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()" id="loginBtn">Login</button>
+
+<button onclick="createAccount()" id="createBtn" style="display:none">Create Account</button>
+
+<p class="link" onclick="toggle()">Create Account</p>
+
+</div>
+
+
+<script>
+
+/* SWITCH LOGIN / REGISTER */
+
+function toggle(){
+
+let title=document.getElementById("title")
+let name=document.getElementById("name")
+let loginBtn=document.getElementById("loginBtn")
+let createBtn=document.getElementById("createBtn")
+
+if(title.innerText==="Login"){
+
+title.innerText="Create Account"
+name.style.display="block"
+loginBtn.style.display="none"
+createBtn.style.display="block"
+
+}else{
+
+title.innerText="Login"
+name.style.display="none"
+loginBtn.style.display="block"
+createBtn.style.display="none"
+
+}
+
+}
+
+
+/* CREATE ACCOUNT */
+
+function createAccount(){
+
+let name=document.getElementById("name").value
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+
+if(user=="" || pass==""){
+alert("Fill all fields")
+return
+}
+
+let users=JSON.parse(localStorage.getItem("users")) || []
+
+users.push({
+name:name,
+username:user,
+password:pass
+})
+
+localStorage.setItem("users",JSON.stringify(users))
+
+alert("Account Created Successfully")
+
+location.reload()
+
+}
+
+
+/* LOGIN */
+
+function login(){
+
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+
+let users=JSON.parse(localStorage.getItem("users")) || []
+
+let found=false
+
+for(let i=0;i<users.length;i++){
+
+if(users[i].username===user && users[i].password===pass){
+found=true
+break
+}
+
+}
+
+if(found){
+
+localStorage.setItem("loggedUser",user)
+
+alert("Login Successful")
+
+window.location="dashboard.html"
+
+}else{
+
+alert("Invalid Login")
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
