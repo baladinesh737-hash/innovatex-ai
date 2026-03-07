@@ -6,8 +6,8 @@ import pandas as pd
 from werkzeug.utils import secure_filename
 from PyPDF2 import PdfReader
 from groq import Groq
-
 import os
+
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # ---------------- HOME ----------------
@@ -170,25 +170,34 @@ def ai_chat():
     data = request.json
     question = data.get("question")
 
-    # Temporary AI response (for demo)
-    answer = f"""
-InnovateX AI Assistant 🤖
+    try:
 
-Your question: {question}
+        completion = groq_client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[
+                {
+                    "role":"system",
+                    "content":"You are InnovateX AI assistant helping students with internships and career guidance."
+                },
+                {
+                    "role":"user",
+                    "content":question
+                }
+            ]
+        )
 
-Suggested guidance:
-• Improve relevant technical skills
-• Work on real projects
-• Apply for internships matching your skillset
-• Practice interview questions
+        answer = completion.choices[0].message.content
 
-(This is a demo AI response during evaluation)
-"""
+        return jsonify({"answer":answer})
 
-    return jsonify({
-        "answer": answer
-    })
+    except Exception as e:
 
+        print(e)
+
+        return jsonify({
+            "answer":"Sorry, AI service temporarily unavailable."
+        })
+        
 # ---------------- SAVE USER ----------------
 @app.route("/save-user", methods=["POST"])
 def save_user():

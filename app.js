@@ -1,151 +1,194 @@
-// ===============================
-// InnovateX Backend Demo Script
-// ===============================
+/* API URL */
 
-const API = "https://innovatex-backend-production.up.railway.app";
+const API="https://innovatex-backend-production.up.railway.app"
 
 
-// -------------------------------
-// 1️⃣ AI CHAT
-// -------------------------------
+/* AUTO GREETING */
 
-async function demoAI(){
+setTimeout(()=>{
 
-const res = await fetch(API + "/ai-chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-question:"How can I get AI internship?"
-})
-});
+bot("Hi 👋 I am your InnovateX Internship AI Assistant. Ask me anything about internships.")
 
-const data = await res.json();
-
-console.log("AI Response:", data.answer);
-
-return data.answer;
-
-}
+},800)
 
 
 
-// -------------------------------
-// 2️⃣ SKILL DETECTION
-// -------------------------------
+/* BOT MESSAGE */
 
-async function demoSkills(resumeText){
+function bot(text){
 
-const res = await fetch(API + "/extract-skills",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-resume_text: resumeText
-})
-});
+let chat=document.getElementById("chat")
 
-const data = await res.json();
+let div=document.createElement("div")
 
-console.log("Detected Skills:", data.skills);
+div.className="bot"
 
-return data.skills;
+div.innerText=text
+
+chat.appendChild(div)
+
+chat.scrollTop=chat.scrollHeight
 
 }
 
 
 
-// -------------------------------
-// 3️⃣ RESUME SCORE
-// -------------------------------
+/* USER MESSAGE */
 
-async function demoScore(resumeText){
+function user(text){
 
-const res = await fetch(API + "/resume-score",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-resume_text: resumeText
-})
-});
+let chat=document.getElementById("chat")
 
-const data = await res.json();
+let div=document.createElement("div")
 
-console.log("Resume Score:", data.resume_score);
+div.className="user"
 
-return data.resume_score;
+div.innerText=text
+
+chat.appendChild(div)
+
+chat.scrollTop=chat.scrollHeight
 
 }
 
 
 
-// -------------------------------
-// 4️⃣ INTERNSHIP RECOMMENDATION
-// -------------------------------
+/* SEND MESSAGE */
 
-async function demoInternships(skills){
+async function send(){
 
-const res = await fetch(API + "/recommend-internships",{
+let msg=document.getElementById("msg").value.trim()
+
+if(msg==="") return
+
+user(msg)
+
+document.getElementById("msg").value=""
+
+/* typing animation */
+
+let typing=document.createElement("div")
+typing.className="bot"
+typing.innerText="AI is typing..."
+typing.id="typing"
+
+document.getElementById("chat").appendChild(typing)
+
+try{
+
+let response = await fetch(API+"/ai-chat",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-skills: skills
+question:msg
 })
-});
+})
 
-const data = await res.json();
+let data = await response.json()
 
-console.log("Recommended Internships:", data);
+let typingEl=document.getElementById("typing")
+if(typingEl) typingEl.remove()
 
-return data;
+bot(data.answer || data.reply || "AI response unavailable")
+
+}catch(error){
+
+let typingEl=document.getElementById("typing")
+if(typingEl) typingEl.remove()
+
+bot("⚠️ AI server error. Please try again.")
+
+}
 
 }
 
 
 
-// -------------------------------
-// ⭐ FULL BACKEND WORKFLOW DEMO
-// -------------------------------
+/* ENTER KEY SEND */
 
-async function runFullDemo(){
+document.getElementById("msg").addEventListener("keypress",function(e){
 
-console.log("===== InnovateX Backend Demo =====");
+if(e.key==="Enter"){
+send()
+}
 
-
-// AI CHAT
-
-await demoAI();
+})
 
 
-// DEMO RESUME TEXT
 
-let resumeText = `
-Python Flask SQL Machine Learning
-Built AI project using Python
-Experience with HTML CSS Git
-`;
+/* QUICK BUTTONS */
 
+function sayHi(){
 
-// SKILL DETECTION
+user("Hi")
 
-let skills = await demoSkills(resumeText);
+sendAI("Hi")
+
+}
 
 
-// RESUME SCORE
 
-await demoScore(resumeText);
+function internship(){
+
+user("I want internship")
+
+sendAI("I want internship")
+
+}
 
 
-// INTERNSHIP MATCH
 
-await demoInternships(skills);
+/* QUICK AI CALL */
 
-console.log("===== Demo Completed =====");
+async function sendAI(message){
+
+let typing=document.createElement("div")
+typing.className="bot"
+typing.innerText="AI is typing..."
+typing.id="typing"
+
+document.getElementById("chat").appendChild(typing)
+
+try{
+
+let response = await fetch(API+"/ai-chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+question:message
+})
+})
+
+let data = await response.json()
+
+let typingEl=document.getElementById("typing")
+if(typingEl) typingEl.remove()
+
+bot(data.answer || data.reply)
+
+}catch(error){
+
+let typingEl=document.getElementById("typing")
+if(typingEl) typingEl.remove()
+
+bot("⚠️ AI server error.")
+
+}
+
+}
+
+
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.removeItem("loggedUser")
+
+window.location="login.html"
 
 }
